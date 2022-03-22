@@ -13,13 +13,23 @@ namespace Software_Project
 {
     public partial class frmLogin : Form
     {
+        public static frmLogin frmLog;
         public frmLogin()
         {
             InitializeComponent();
+            TxtUsername = this.txtUsername;
+            TxtPassword = this.txtPassword;
+            frmLog = this;
+            
+            
         }
-        OleDbConnection con = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=db_users.mdb");
-        OleDbCommand cmd = new OleDbCommand();
-        OleDbDataAdapter da = new OleDbDataAdapter();
+        public static TextBox TxtPassword;
+        public static TextBox TxtUsername;
+        
+        
+        public static string name = "";
+        Model model = new Model();
+
         private void frmLogin_Load(object sender, EventArgs e)
         {
 
@@ -27,24 +37,7 @@ namespace Software_Project
 
         private void button1_Click(object sender, EventArgs e)
         {
-            con.Open();
-            string login = "SELECT * FROM tbl_users WHERE username= '" + txtUsername.Text + "' and password= '" + txtPassword.Text + "'";
-            cmd = new OleDbCommand(login, con);
-            OleDbDataReader dr = cmd.ExecuteReader();
-
-            if (dr.Read() == true)
-            {
-                //The Form which will appear after loggin in
-                new dashboard().Show();
-                this.Hide();
-            }
-            else
-            {
-                MessageBox.Show("Invalid Username or Password, Please Try Again", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtUsername.Text = "";
-                txtPassword.Text = "";
-                txtUsername.Focus();
-            }
+            model.VerifyUserAndPass();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -59,12 +52,10 @@ namespace Software_Project
             if (CheckbxShowPas.Checked)
             {
                 txtPassword.PasswordChar = '\0';
-
             }
             else
             {
-                txtPassword.PasswordChar = '•';
-
+               txtPassword.PasswordChar = '•';
             }
         }
 
@@ -72,6 +63,19 @@ namespace Software_Project
         {
             new frmRegister().Show();
             this.Hide();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+        public void InvalidUserPassCall()
+        {
+            MessageBox.Show("Invalid Username or Password, Please Try Again", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        public void CloseForm()
+        {
+            this.Close();
         }
     }
 }
